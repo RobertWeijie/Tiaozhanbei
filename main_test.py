@@ -6,7 +6,7 @@ import os
 from rag_prompt_generator import RAGPromptGenerator  # 新增导入
 
 client = OpenAI(
-    api_key="sk-0f50b7ba05fa41bba388684a8ca669fc",
+    api_key="DASHSCOPE_API_KEY",
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
 

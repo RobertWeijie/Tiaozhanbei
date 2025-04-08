@@ -12,7 +12,7 @@ genai.configure(api_key="your_google_api_key")  # 替换为实际的API Key
 
 # 初始化 OpenAI 客户端
 client = OpenAI(
-    api_key="sk-0f50b7ba05fa41bba388684a8ca669fc",  # 替换为你的通义千问 API Key
+    api_key="DASHSCOPE_API_KEY",  # 替换为你的通义千问 API Key
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"  # 使用通义千问的兼容模式
 )
 
