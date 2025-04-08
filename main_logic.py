@@ -117,7 +117,7 @@ def run_4_7_logic(user_input: str) -> str:
             "type": "function",
             "function": {"name": "get_current_weather", "arguments": {"location": "上海"}}
         }],
-        parallel_tool_calls=True
+        #parallel_tool_calls=True
     )
 
     assistant_message = completion.choices[0].message
