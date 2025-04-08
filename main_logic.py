@@ -1,38 +1,43 @@
 # main_logic.py
 
-from openai import OpenAI
-from datetime import datetime
+import os
 import json
+from datetime import datetime
+from openai import OpenAI
 from rag_prompt_generator import RAGPromptGenerator
 from weather_service import WeatherService
 import google.generativeai as genai
 
-# 配置 Google API 密钥（如果有使用）
-genai.configure(api_key="your_google_api_key")  # 替换为实际的API Key
+# 配置 Google Gemini（可选，未使用可忽略）
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY", "dummy"))
 
-# 初始化 OpenAI 客户端
+# ✅ 读取通义千问 API Key（强烈推荐使用环境变量）
+api_key = os.getenv("DASHSCOPE_API_KEY")
+if not api_key:
+    raise ValueError("❌ 未检测到 DASHSCOPE_API_KEY 环境变量，请在 Render 设置正确的值")
+
+# 初始化 OpenAI 兼容客户端（通义千问）
 client = OpenAI(
-    api_key="DASHSCOPE_API_KEY",  # 替换为你的通义千问 API Key
-    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"  # 使用通义千问的兼容模式
+    api_key=api_key,
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
 )
 
 # 初始化天气服务
 weather_service = WeatherService(
-    geonames_user="shouxc",  # 替换为你的用户名
-    owm_api_key="4aa6b87fb08c3542988cc4bdf67da3af"  # 替换为你的 OpenWeather API Key
+    geonames_user="shouxc",  # 可改为你自己的账号
+    owm_api_key=os.getenv("OWM_API_KEY", "dummy")  # 推荐也通过环境变量注入
 )
 
-# 初始化RAG组件（增强型分析模型）
+# 初始化 RAG 组件（增强型分析）
 rag_generator = RAGPromptGenerator(
-    embeddings_file="embeddings.parquet",  # 用到的嵌入文件路径
-    model_path="./local_model",  # 本地模型路径
-    top_n=5,  # 控制返回段落数
-    similarity_threshold=0.4,  # 相似度阈值
-    max_context_length=1500  # 上下文长度
+    embeddings_file="embeddings.parquet",
+    model_path="./local_model",
+    top_n=5,
+    similarity_threshold=0.4,
+    max_context_length=1500
 )
 
-
-# 提取和处理工具调用（天气、时间等）
+# 工具调用：天气
 def get_current_weather(arguments):
     try:
         location = arguments.get("location")
@@ -42,11 +47,11 @@ def get_current_weather(arguments):
     except Exception as e:
         return f"天气获取失败：{str(e)}"
 
-
+# 工具调用：时间
 def get_current_time():
     return f"当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
-
+# 工具调用调度
 def process_tool_calls(assistant_message):
     tool_responses = []
     for tool_call in assistant_message.get("tool_calls", []):
@@ -74,64 +79,81 @@ def process_tool_calls(assistant_message):
             })
     return tool_responses
 
-
-# 4.7模型分析逻辑
+# 主逻辑：4.7 航线分析逻辑
 def run_4_7_logic(user_input: str) -> str:
     system_prompt = """作为海运智能决策系统，请按以下结构输出分析报告：
 
-    【航线推荐】
-    - 主推路线：路线名称（基于XXX因素）
-    - 替代方案：方案名称（简要优势）
-    - 航程（XX海里）、预估耗时（XX天）
+【航线推荐】
+- 主推路线：路线名称（基于XXX因素）
+- 替代方案：方案名称（简要优势）
+- 航程（XX海里）、预估耗时（XX天）
 
-    【风险评估】
-    1. 气象风险（台风/季风等）
-    2. 地缘风险（如苏伊士通行）
-    3. 成本波动（±X%）
+【风险评估】
+1. 气象风险（台风/季风等）
+2. 地缘风险（如苏伊士通行）
+3. 成本波动（±X%）
 
-    【决策建议】
-    - 最优方案 / 备选策略 / 启航时间建议
+【决策建议】
+- 最优方案 / 备选策略 / 启航时间建议
 
-    输出要求：
-    - 清晰小标题 + **加粗数值**
-    - 实时数据用工具获取
-    """
+输出要求：
+- 清晰小标题 + **加粗数值**
+- 实时数据用工具获取
+"""
 
-    # 消息列表，用于传递给模型
     messages = [{"role": "system", "content": system_prompt}]
 
     try:
-        # 通过 RAG 生成增强的提示词
         enhanced_prompt = rag_generator.generate_prompt(user_input)
+        print("✅ RAG 提示词生成成功")
     except Exception as e:
-        print(f"RAG处理失败：{str(e)}")
-        enhanced_prompt = user_input  # 如果 RAG 失败则降级使用原始输入
+        print(f"❌ RAG 处理失败：{str(e)}")
+        enhanced_prompt = user_input
 
     messages.append({"role": "user", "content": enhanced_prompt})
 
-    # 向模型发送请求
-    completion = client.chat.completions.create(
-        model="qwen-plus",  # 使用通义千问模型（或你需要的其他模型）
-        messages=messages,
-        tools=[{
-            "type": "function",
-            "function": {"name": "get_current_weather", "arguments": {"location": "上海"}}
-        }],
-        #parallel_tool_calls=True
-    )
+    try:
+        completion = client.chat.completions.create(
+            model="qwen-plus",
+            messages=messages,
+            tools=[{
+                "type": "function",
+                "function": {
+                    "name": "get_current_weather",
+                    "description": "获取城市天气",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "城市名称"
+                            }
+                        },
+                        "required": ["location"]
+                    }
+                }
+            }]
+            # ❌ 注意：不加 parallel_tool_calls，通义不支持
+        )
+    except Exception as e:
+        print(f"❌ 第一次模型调用失败：{str(e)}")
+        return "模型调用失败，请检查 API Key 或服务状态"
 
     assistant_message = completion.choices[0].message
     messages.append(assistant_message)
 
-    # 处理工具调用响应
     if "tool_calls" in assistant_message:
         tool_responses = process_tool_calls(assistant_message)
         messages.extend(tool_responses)
 
-        final_response = client.chat.completions.create(
-            model="qwen-plus",
-            messages=messages
-        )
-        return final_response.choices[0].message.content.strip()
+        try:
+            final_response = client.chat.completions.create(
+                model="qwen-plus",
+                messages=messages
+            )
+            return final_response.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"❌ 生成最终回复失败：{str(e)}")
+            return "工具调用成功，但生成最终分析报告失败。"
 
     return assistant_message.content.strip()
