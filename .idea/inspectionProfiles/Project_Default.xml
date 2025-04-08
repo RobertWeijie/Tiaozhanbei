@@ -1,0 +1,23 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="city" />
+          <option value="train" />
+          <option value="blockchain.fixed_output" />
+          <option value="main.sorted_candidates" />
+          <option value="main.average_support_rates_sorted" />
+          <option value="tensorflow_probability" />
+          <option value="多智能体.yahoo_fin" />
+          <option value="视频.order_book" />
+          <option value="视频.root" />
+          <option value="视频.update_price_chart" />
+          <option value="talib" />
+          <option value="linearmodels.panel.PanelGMM" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
