@@ -11,7 +11,7 @@ scikit-learn==1.2.2
 torch==2.0.1
 transformers==4.35.2              # ✅ 升级以兼容
 sentence-transformers==2.6.1      # ✅ 解决 Pooling 报错
-huggingface-hub==0.15.1
+huggingface-hub==0.17.3
 httpx==0.23.0
 pyarrow==14.0.1
 
