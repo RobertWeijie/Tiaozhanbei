@@ -64,6 +64,7 @@ def generate_analysis(start, end, middle_ports):
         "特殊情况下，如避灾或绕道，需详细解释替代路径的原因。"
     )
 
+
     model = genai.GenerativeModel("gemini-2.0-flash")
     response = model.generate_content(prompt)
     text = response.text
@@ -149,7 +150,7 @@ html_template = """
   
   <div class="container">
         <h3>平台介绍</h3>
-        <p>我们是一个专业的航运航线优化平台，利用先进的人工智能技术，结合实时天气数据、路径风险和费用因素，为用户提供最优的航线规划方案还能提供对话模式。</p>
+        <p>我们是一个专业的航运航线优化平台，利用先进的人工智能技术，结合实时天气数据、路径风险和费用因素，为用户提供最优的航线规划方案和对话模式。</p>
         <p>普通用户：只需选择起始港口和目的地港口，我们将为您生成最快且经济的推荐路线。</p>
         <p>商家用户：除了起始和目的地港口，您还可以填写最多两个中间港口，我们会根据您的需求提供不同的航线方案，同时会考虑天气变化、中途港口收费等特殊情况，为您提供灵活的绕道选择。</p>
     </div>
@@ -163,6 +164,8 @@ html_template = """
       <input type="submit" value="提交对话">
     </form>
   </div>
+  
+  
 
   {% if result %}
   <div class="container result">
@@ -207,3 +210,5 @@ def home():
 # 启动服务，适配云服务器监听
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
+    
