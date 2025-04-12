@@ -75,9 +75,9 @@ def generate_analysis(start, end, middle_ports):
 
 
 # HTML 模板
-html_template = """
 <!doctype html>
 <html lang="zh">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,65 +85,70 @@ html_template = """
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f4f9;
-        color: #333;
-        margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
     }
 
     /* 示例库容器样式 */
-    .gallery-container {
-        width: 100%;
-        position: relative;
-        overflow: hidden;
+   .gallery-container {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
     }
 
-    .gallery {
-        display: flex;
-        width: 400%;
-        animation: slide 150s infinite linear;
+   .gallery {
+      display: flex;
+      width: 400%;
+      animation: slide 150s infinite linear;
     }
 
-    .gallery-item {
-        width: 25%;
-        padding: 10px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.3s ease-in-out;
+   .gallery-item {
+      width: 25%;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease-in-out;
     }
 
-    .gallery-item:hover {
-        transform: scale(1.05);
+   .gallery-item:hover {
+      transform: scale(1.05);
     }
 
-    .gallery-item img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
+   .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
     }
 
     /* 定义动画 */
     @keyframes slide {
-        0% {
-            transform: translateX(0);
-        }
-        25% {
-            transform: translateX(-100%);
-        }
-        50% {
-            transform: translateX(-200%);
-        }
-        75% {
-            transform: translateX(-300%);
-        }
-        100% {
-            transform: translateX(0);
-        }
+      0% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-100%);
+      }
+
+      50% {
+        transform: translateX(-200%);
+      }
+
+      75% {
+        transform: translateX(-300%);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
+
 <body class="bg-gray-100">
 
   <!-- 导航栏 -->
@@ -171,7 +176,7 @@ html_template = """
   <!-- 对话模式 -->
   <div class="container mx-auto py-16 px-4">
     <h2 class="text-3xl font-semibold text-center text-blue-600 mb-8">对话模式</h2>
-    <form method="post" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <form method="post">
       <input type="hidden" name="action" value="model4.7">
       <label>请输入文本内容：</label>
       <input type="text" name="user_input" required class="w-full p-3 border border-gray-300 rounded-md">
@@ -201,12 +206,14 @@ html_template = """
     </form>
 
     <!-- 优化结果展示 -->
-    <div class="container result">
-		<h3>📌 中文建议：</h3>
-		<p>{{ result.中文|replace('**', '')|replace('*', '') }}</p>
-		<h3>🌐 English Suggestion:</h3>
-		<p>{{ result.English|replace('**', '')|replace('*', '') }}</p>
-	</div>
+    <div id="result" class="mt-8 hidden">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-semibold text-blue-600">中文建议：</h3>
+        <p id="chinese-result">这里将显示中文优化建议</p>
+        <h3 class="text-xl font-semibold text-blue-600 mt-4">English Suggestion:</h3>
+        <p id="english-result">这里将显示英文优化建议</p>
+      </div>
+    </div>
   </section>
 
   <!-- 示例库 -->
@@ -250,13 +257,19 @@ html_template = """
 
   <script>
     // 处理表单提交并显示优化结果
-    document.getElementById('optimize-form').addEventListener('submit', function(event) {
+    document.getElementById('optimize-form').addEventListener('submit', function (event) {
       event.preventDefault();
+      // 这里模拟获取数据并填充结果，实际应用中需要通过AJAX等方式从服务器获取
+      const chineseResult = "模拟的中文优化建议内容";
+      const englishResult = "Simulated English optimization suggestion content";
+      document.getElementById('chinese-result').textContent = chineseResult;
+      document.getElementById('english-result').textContent = englishResult;
       document.getElementById('result').classList.remove('hidden');
     });
   </script>
 
 </body>
+
 </html>
 """
 
