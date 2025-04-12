@@ -168,10 +168,21 @@ html_template = """
     <a href="#optimize" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">立即开始优化</a>
   </section>
 
+  <!-- 对话模式 -->
+  <div class="container mx-auto py-16 px-4">
+    <h2 class="text-3xl font-semibold text-center text-blue-600 mb-8">对话模式</h2>
+    <form method="post" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <input type="hidden" name="action" value="model4.7">
+      <label>请输入文本内容：</label>
+      <input type="text" name="user_input" required class="w-full p-3 border border-gray-300 rounded-md">
+      <input type="submit" value="提交对话" class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+    </form>
+  </div>
+
   <!-- 航线优化表单 -->
   <section id="optimize" class="container mx-auto py-16 px-4">
     <h2 class="text-3xl font-semibold text-center text-blue-600 mb-8">航线优化</h2>
-    <form action="#" method="post" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <form id="optimize-form" action="#" method="post" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
       <div class="mb-4">
         <label for="start" class="block text-lg font-medium">起始港口</label>
         <input type="text" name="start" class="w-full p-3 border border-gray-300 rounded-md" required>
@@ -190,7 +201,7 @@ html_template = """
     </form>
 
     <!-- 优化结果展示 -->
-    <div class="mt-8">
+    <div id="result" class="mt-8 hidden">
       <div class="bg-white p-6 rounded-lg shadow-lg">
         <h3 class="text-xl font-semibold text-blue-600">中文建议：</h3>
         <p>根据您提供的起始港口和目的港口，AI将为您生成最优化的航线推荐...</p>
@@ -208,22 +219,18 @@ html_template = """
         <div class="gallery-item">
           <img src="https://via.placeholder.com/400x250" alt="航线示例">
           <h3 class="text-lg font-semibold text-blue-600 mt-4">示例1：上海到洛杉矶</h3>
-          <p class="text-gray-600"></p>
         </div>
         <div class="gallery-item">
           <img src="https://via.placeholder.com/400x250" alt="航线示例">
           <h3 class="text-lg font-semibold text-blue-600 mt-4">示例2：巴拿马到鹿特丹</h3>
-          <p class="text-gray-600"></p>
         </div>
         <div class="gallery-item">
           <img src="https://via.placeholder.com/400x250" alt="航线示例">
           <h3 class="text-lg font-semibold text-blue-600 mt-4">示例3：香港到纽约</h3>
-          <p class="text-gray-600"></p>
         </div>
         <div class="gallery-item">
           <img src="https://via.placeholder.com/400x250" alt="航线示例">
           <h3 class="text-lg font-semibold text-blue-600 mt-4">示例4：广州到东京</h3>
-          <p class="text-gray-600"></p>
         </div>
       </div>
     </div>
@@ -243,55 +250,14 @@ html_template = """
     <p>&copy; 2025 航线优化平台 | 保留所有权利</p>
   </footer>
 
-</body>
-</html>
+  <script>
+    // 处理表单提交并显示优化结果
+    document.getElementById('optimize-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      document.getElementById('result').classList.remove('hidden');
+    });
+  </script>
 
-
-  <div class="container">
-    <h2>对话模式</h2>
-    <form method="post">
-      <input type="hidden" name="action" value="model4.7">
-      <label>请输入文本内容：</label>
-      <input type="text" name="user_input" required>
-      <input type="submit" value="提交对话">
-    </form>
-  </div>
-
-
-
-  {% if result %}
-<div class="container result">
-  <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-    <h3 class="text-2xl font-semibold text-blue-600">📌 中文建议：</h3>
-    <ul class="list-disc pl-5 mt-4">
-      <li><strong>起始港口：</strong> {{ result.中文起始港口|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>目的港口：</strong> {{ result.中文目的港口|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>天气情况：</strong> {{ result.中文天气|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>推荐路线：</strong> {{ result.中文推荐路线|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>优化建议：</strong> {{ result.中文优化建议|replace('**', '')|replace('*', '') }}</li>
-    </ul>
-  </div>
-
-  <div class="bg-white p-6 rounded-lg shadow-lg">
-    <h3 class="text-2xl font-semibold text-blue-600">🌐 English Suggestion:</h3>
-    <ul class="list-disc pl-5 mt-4">
-      <li><strong>Starting Port:</strong> {{ result.English.starting_port|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>Destination Port:</strong> {{ result.English.destination_port|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>Weather Conditions:</strong> {{ result.English.weather|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>Recommended Route:</strong> {{ result.English.recommended_route|replace('**', '')|replace('*', '') }}</li>
-      <li><strong>Optimization Suggestions:</strong> {{ result.English.optimization_suggestions|replace('**', '')|replace('*', '') }}</li>
-    </ul>
-  </div>
-</div>
-{% endif %}
-
-
-  {% if result_47 %}
-  <div class="container result">
-    <h3>📘 模型分析结果：</h3>
-    <p>{{ result_47 }}</p>
-  </div>
-  {% endif %}
 </body>
 </html>
 """
