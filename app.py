@@ -201,14 +201,12 @@ html_template = """
     </form>
 
     <!-- 优化结果展示 -->
-    <div id="result" class="mt-8 hidden">
-      <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h3 class="text-xl font-semibold text-blue-600">中文建议：</h3>
-        <p>根据您提供的起始港口和目的港口，AI将为您生成最优化的航线推荐...</p>
-        <h3 class="text-xl font-semibold text-blue-600 mt-4">English Suggestion:</h3>
-        <p>Based on the ports you selected, AI will provide the most optimized route...</p>
-      </div>
-    </div>
+    <div class="container result">
+		<h3>📌 中文建议：</h3>
+		<p>{{ result.中文|replace('**', '')|replace('*', '') }}</p>
+		<h3>🌐 English Suggestion:</h3>
+		<p>{{ result.English|replace('**', '')|replace('*', '') }}</p>
+	</div>
   </section>
 
   <!-- 示例库 -->
