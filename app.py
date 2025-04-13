@@ -82,140 +82,311 @@ html_template = """
 <!doctype html>
 <html lang="zh">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>航线与文本智能平台</title>
-	<style>
-		body {
-				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-				background-color: #f4f4f9;
-				color: #333;
-				margin: 0;
-				padding: 20px;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-		}
-		.container {
-				background-color: #fff;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-				padding: 20px;
-				width: 100%;
-				max-width: 800px;
-				margin-bottom: 20px;
-		}
-		h2 {
-				color: #1a73e8;
-				margin-bottom: 20px;
-				text-align: center;
-		}
-		form {
-				display: flex;
-				flex-direction: column;
-				gap: 15px;
-		}
-		input {
-				padding: 10px;
-				border: 1px solid #ccc;
-				border-radius: 4px;
-		}
-		input[type="submit"] {
-				background-color: #1a73e8;
-				color: white;
-				cursor: pointer;
-				transition: background-color 0.3s ease;
-		}
-		input[type="submit"]:hover {
-				background-color: #1558b6;
-		}
-		.result h3 {
-				color: #1a73e8;
-				margin-top: 20px;
-				margin-bottom: 10px;
-		}
-	</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>航线与文本智能平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- 引入图标库 -->
+    <style>
+        /* 全局样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #f0f5ff; /* 更柔和的背景色 */
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px; /* 更大的圆角 */
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1); /* 更细腻的阴影 */
+            padding: 32px;
+            width: 100%;
+            max-width: 960px;
+            margin: 32px 0;
+            transition: transform 0.3s ease; /* 容器悬停动画 */
+        }
+
+        .container:hover {
+            transform: scale(1.01);
+        }
+
+        h2 {
+            color: #1a73e8;
+            font-size: 2.25rem;
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #1a73e8;
+            border-radius: 2px;
+        }
+
+        /* 导航栏升级 */
+        nav {
+            background: linear-gradient(135deg, #1a73e8, #1558b6); /* 渐变背景 */
+            padding: 20px 40px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(26, 115, 232, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img {
+            width: 40px; /* 更大的Logo */
+            height: 40px;
+            border-radius: 50%; /* Logo圆形 */
+            object-fit: cover;
+        }
+
+        .logo span {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.125rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #e0f0ff;
+        }
+
+        .nav-links a::before {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: white;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* 表单样式优化 */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-size: 1.125rem;
+            color: #666;
+        }
+
+        input {
+            padding: 14px 20px;
+            border: 2px solid #e0e8f9; /* 更明显的边框 */
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.2);
+        }
+
+        input[type="submit"] {
+            background: #1a73e8;
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 18px rgba(26, 115, 232, 0.2);
+        }
+
+        /* 结果展示区 */
+        .result h3 {
+            color: #1a73e8;
+            font-size: 1.5rem;
+            margin: 32px 0 16px;
+        }
+
+        .result p {
+            font-size: 1.125rem;
+            color: #444;
+            line-height: 1.8;
+        }
+
+        /* 关于我们与页脚 */
+        #about {
+            text-align: center;
+            padding: 64px 32px;
+            background: ;
+            color: black;
+            margin-top: 64px;
+        }
+
+        footer {
+            background: #1558b6;
+            color: white;
+            text-align: center;
+            padding: 32px;
+            width: 100%;
+            margin-top: 64px;
+            font-size: 1rem;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 24px;
+            }
+
+            .container {
+                padding: 24px;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
- <!-- 导航栏 -->
-  <nav class="bg-blue-600 text-white p-4">
-    <div class="container mx-auto flex justify-between items-center">
-      <a href="#" class="text-2xl font-bold flex items-center">
-        <img src="https://via.placeholder.com/40" alt="Logo" class="mr-2">航线优化平台
-      </a>
-      <ul class="flex space-x-4">
-        <li><a href="#home" class="hover:underline">主页</a></li>
-        <li><a href="#optimize" class="hover:underline">航线优化</a></li>
-        <li><a href="#gallery" class="hover:underline">示例库</a></li>
-        <li><a href="#about" class="hover:underline">关于我们</a></li>
-      </ul>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/40" alt="Logo"> <!-- 建议替换为实际Logo -->
+                <span>航线优化平台</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">主页</a></li>
+                <li><a href="#optimize">航线优化</a></li>
+                <li><a href="#gallery">对话模式</a></li>
+                <li><a href="#about">关于我们</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="optimize">
+    <div class="container">
+        <h2>航线优化</h2>
+        <form method="post">
+            <label>起始港口:</label>
+            <input type="text" name="start" required>
+            <label>目的港口:</label>
+            <input type="text" name="end" required>
+            <label>中间港口（最多两个，用逗号分隔）:</label>
+            <input type="text" name="middle">
+            <input type="submit" value="生成建议">
+        </form>
     </div>
-  </nav>
-  
-	<div class="container">
-		<h2>航线优化</h2>
-		<form method="post">
-			<label>起始港口:</label>
-			<input type="text" name="start" required>
-			<label>目的港口:</label>
-			<input type="text" name="end" required>
-			<label>中间港口（最多两个，用逗号分隔）:</label>
-			<input type="text" name="middle">
-			<input type="submit" value="生成建议">
-		</form>
-	</div>
-	
-	<div class="container">
-				<h3>平台介绍</h3>
-				<p>我们是一个专业的航运航线优化平台，利用先进的人工智能技术，结合实时天气数据、路径风险和费用因素，为用户提供最优的航线规划方案和对话模式。</p>
-				<p>普通用户：只需选择起始港口和目的地港口，我们将为您生成最快且经济的推荐路线。</p>
-				<p>商家用户：除了起始和目的地港口，您还可以填写最多两个中间港口，我们会根据您的需求提供不同的航线方案，同时会考虑天气变化、中途港口收费等特殊情况，为您提供灵活的绕道选择。</p>
-		</div>
 
-	<div class="container">
-		<h2>对话模式</h2>
-		<form method="post">
-			<input type="hidden" name="action" value="model4.7">
-			<label>请输入文本内容：</label>
-			<input type="text" name="user_input" required>
-			<input type="submit" value="提交对话">
-		</form>
-	</div>
-	
-	
-
-	{% if result %}
-	<div class="container result">
-		<h3>📌 中文建议：</h3>
-		<p>{{ result.中文|replace('**', '')|replace('*', '') }}</p>
-		<h3>🌐 English Suggestion:</h3>
-		<p>{{ result.English|replace('**', '')|replace('*', '') }}</p>
-	</div>
-	{% endif %}
-
-	{% if result_47 %}
-	<div class="container result">
-		<h3>📘 模型分析结果：</h3>
-		<p>{{ result_47 }}</p>
-	</div>
-	{% endif %}
-
-<!-- 关于我们 -->
-  <section id="about" class="bg-gray-800 text-white py-16 px-4">
-    <div class="container mx-auto text-center">
-      <h2 class="text-3xl font-semibold mb-6">关于我们</h2>
-      <p class="text-xl mb-6">航线优化平台致力于通过AI技术为用户提供最佳航线推荐，帮助节省运输时间和成本。</p>
-      <p class="text-lg">我们结合天气、港口拥堵和费用等因素，为商家和个人用户提供个性化的航线优化建议。</p>
+    <div class="container">
+        <h3>平台介绍</h3>
+        <p>我们是一个专业的航运航线优化平台，利用先进的人工智能技术，结合实时天气数据、路径风险和费用因素，为用户提供最优的航线规划方案和对话模式。</p>
+        <p>普通用户：只需选择起始港口和目的地港口，我们将为您生成最快且经济的推荐路线。</p>
+        <p>商家用户：除了起始和目的地港口，您还可以填写最多两个中间港口，我们会根据您的需求提供不同的航线方案，同时会考虑天气变化、中途港口收费等特殊情况，为您提供灵活的绕道选择。</p>
     </div>
-  </section>
 
-  <!-- 页脚 -->
-  <footer class="bg-gray-900 text-white text-center py-4">
-    <p>&copy; 2025 航线优化平台 | 保留所有权利</p>
-  </footer>
+      <section id="gallery">
+    <div class="container">
+        <h2>对话模式</h2>
+        <form method="post">
+            <input type="hidden" name="action" value="model4.7">
+            <label>请输入文本内容：</label>
+            <input type="text" name="user_input" required>
+            <input type="submit" value="提交对话">
+        </form>
+    </div>
 
-  </body>
-  
+    {% if result %}
+    <div class="container result">
+        <h3>📌 中文建议：</h3>
+        <p>{{ result.中文|replace('**', '')|replace('*', '') }}</p>
+        <h3>🌐 English Suggestion:</h3>
+        <p>{{ result.English|replace('**', '')|replace('*', '') }}</p>
+    </div>
+    {% endif %}
+
+    {% if result_47 %}
+    <div class="container result">
+        <h3>📘 模型分析结果：</h3>
+        <p>{{ result_47 }}</p>
+    </div>
+    {% endif %}
+
+    <!-- 关于我们 -->
+    <section id="about">
+        <h2>关于我们</h2>
+        <p class="text-xl mb-6">航线优化平台致力于通过AI技术为用户提供最佳航线推荐，帮助节省运输时间和成本。</p>
+        <p class="text-lg">我们结合天气、港口拥堵和费用等因素，为商家和个人用户提供个性化的航线优化建议。</p>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 航线优化平台 | 保留所有权利</p>
+    </footer>
+</body>
 </html>
 """
 
