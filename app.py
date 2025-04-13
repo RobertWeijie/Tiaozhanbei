@@ -315,7 +315,7 @@ html_template = """
     <nav>
         <div class="nav-container">
             <div class="logo">
-                <img src="https://github.com/RobertWeijie/Tiaozhanbei/demo1.png" alt="Logo"> <!-- 建议替换为实际Logo -->
+                <img src="https://github.com/RobertWeijie/Tiaozhanbei/blob/main/demo1.png" alt="Logo"> <!-- 建议替换为实际Logo -->
                 <span>航线优化平台</span>
             </div>
             <ul class="nav-links">
