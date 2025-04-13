@@ -315,7 +315,7 @@ html_template = """
     <nav>
         <div class="nav-container">
             <div class="logo">
-                <img src="https://via.placeholder.com/40" alt="Logo"> <!-- 建议替换为实际Logo -->
+                <img src="demo1.png" alt="Logo"> <!-- 建议替换为实际Logo -->
                 <span>航线优化平台</span>
             </div>
             <ul class="nav-links">
@@ -371,6 +371,7 @@ html_template = """
     {% if result_47 %}
     <div class="container result">
         <h3>📘 模型分析结果：</h3>
+	<p>{{ result.中文|replace('**', '')|replace('*', '') }}</p>
         <p>{{ result_47 }}</p>
     </div>
     {% endif %}
@@ -384,7 +385,7 @@ html_template = """
 
     <!-- 页脚 -->
     <footer>
-        <p>&copy; 2025 航线优化平台 | 保留所有权利</p>
+        <p>&copy; 2025 BUAA-挑战杯航线优化平台 | 保留所有权利</p>
     </footer>
 </body>
 </html>
