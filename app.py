@@ -371,7 +371,6 @@ html_template = """
     {% if result_47 %}
     <div class="container result">
         <h3>📘 模型分析结果：</h3>
-	<p>{{ result.中文|replace('**', '')|replace('*', '') }}</p>
         <p>{{ result_47 }}</p>
     </div>
     {% endif %}
